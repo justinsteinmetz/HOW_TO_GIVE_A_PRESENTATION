@@ -4,7 +4,7 @@
 
 A single-page interactive guide built around one principle: the same eight disciplines are revisited every year, at increasing sophistication. Students at any stage can use the same tool — the framework scales from Show & Tell to academic and professional delivery.
 
-🔗 [https://justinsteinmetz.github.io/HOW_TO_GIVE_A_PRESENTATION/](https://justinsteinmetz.github.io/HOW_TO_GIVE_A_PRESENTATION/)
+https://justinsteinmetz.github.io/how_to_give_a_presentation/
 
 ---
 
