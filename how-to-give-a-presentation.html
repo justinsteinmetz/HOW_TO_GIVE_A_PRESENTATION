@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Give a Presentation — Speak with clarity, confidence, and impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.08);
+  --border-bright: rgba(255,255,255,0.18);
+  --text: #e8eaf0;
+  --text-dim: #8892a4;
+  --text-dimmer: #4a5568;
+  --accent1: #c8a96e;
+  --accent2: #6eb5c8;
+  --accent3: #a06ec8;
+  --accent4: #6ec8a0;
+  --accent5: #c86e82;
+  --glow1: rgba(200,169,110,0.15);
+  --glow2: rgba(110,181,200,0.15);
+  --glow3: rgba(160,110,200,0.15);
+  --glow4: rgba(110,200,160,0.15);
+  --glow5: rgba(200,110,130,0.15);
+  /* Dynamic stage colour — updated by JS */
+  --sc: var(--accent4);
+  --sg: var(--glow4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+#canvas-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.1rem 2rem;
+  background: rgba(7,9,15,0.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-brand { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.15em; color: var(--accent1); text-transform: uppercase; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--text-dim); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
+
+/* ── STAGE SWITCHER (new in v3, styled to match v2) ── */
+.stage-switcher {
+  position: fixed; top: 56px; left: 0; right: 0; z-index: 90;
+  background: rgba(7,9,15,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; overflow-x: auto; scrollbar-width: none;
+  padding: 0 1.5rem;
+}
+.stage-switcher::-webkit-scrollbar { display: none; }
+.stage-btn {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0.6rem 1.4rem; gap: 0.15rem;
+  border: none; background: transparent; cursor: pointer;
+  border-bottom: 2px solid transparent; color: var(--text-dimmer);
+  transition: all 0.22s; min-width: 108px;
+}
+.stage-btn:hover { color: var(--text-dim); }
+.stage-btn.active { color: var(--sc); border-bottom-color: var(--sc); }
+.stage-btn .sn { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; }
+.stage-btn .st { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; line-height: 1.1; font-style: italic; }
+.stage-btn .sg { font-family: 'DM Mono', monospace; font-size: 0.54rem; letter-spacing: 0.08em; color: var(--text-dimmer); }
+
+/* Per-stage active colour for switcher button */
+.stage-btn[data-s="1"].active { color: var(--accent4); border-bottom-color: var(--accent4); }
+.stage-btn[data-s="2"].active { color: var(--accent2); border-bottom-color: var(--accent2); }
+.stage-btn[data-s="3"].active { color: var(--accent1); border-bottom-color: var(--accent1); }
+.stage-btn[data-s="4"].active { color: var(--accent3); border-bottom-color: var(--accent3); }
+.stage-btn[data-s="5"].active { color: var(--accent5); border-bottom-color: var(--accent5); }
+
+/* ── LAYOUT ── */
+.container { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+section { padding: 5.5rem 0; position: relative; z-index: 1; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start;
+  padding: 9rem 0 4rem;
+}
+.hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent1); margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards; transition: color 0.4s; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 1.25rem; max-width: 14ch; opacity: 0; animation: fadeUp 0.9s ease 0.35s forwards; }
+.hero h1 em { font-style: italic; color: var(--accent1); transition: color 0.4s; }
+.hero-subtitle { font-size: 1.05rem; color: var(--text-dim); max-width: 48ch; margin-bottom: 2rem; font-weight: 300; opacity: 0; animation: fadeUp 0.9s ease 0.5s forwards; }
+.hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.9s ease 0.65s forwards; margin-bottom: 2.5rem; }
+
+/* Start box */
+.start-box {
+  opacity: 0; animation: fadeUp 0.9s ease 0.8s forwards;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--accent1);
+  border-radius: 6px; padding: 1.5rem 1.75rem; max-width: 540px;
+  transition: border-color 0.4s;
+}
+.start-box-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent1); margin-bottom: 0.65rem; transition: color 0.4s; }
+.start-box-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.65rem; }
+.start-box-steps { list-style: none; counter-reset: sb; display: flex; flex-direction: column; gap: 0.4rem; }
+.start-box-steps li { counter-increment: sb; display: flex; gap: 0.7rem; font-size: 0.88rem; color: var(--text-dim); align-items: flex-start; }
+.start-box-steps li::before { content: counter(sb); font-family: 'DM Mono', monospace; font-size: 0.6rem; background: var(--accent1); color: var(--bg); width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: background 0.4s; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; border-radius: 3px; font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.1em; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s; }
+.btn-primary { background: var(--accent1); color: var(--bg); font-weight: 500; transition: background 0.4s; }
+.btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border-bright); }
+.btn-ghost:hover { color: var(--text); border-color: var(--accent2); }
+
+/* ── SECTION HEADERS ── */
+.section-label { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent1); margin-bottom: 0.75rem; transition: color 0.4s; }
+.section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 0.75rem; }
+.section-intro { color: var(--text-dim); max-width: 58ch; font-size: 0.95rem; font-weight: 300; margin-bottom: 3rem; }
+
+/* ── FRAMEWORK SPINE ── */
+.ascent-wrapper { display: grid; grid-template-columns: 60px 1fr; gap: 0 2rem; max-width: 900px; }
+.ascent-spine { display: flex; flex-direction: column; align-items: center; }
+.spine-line { width: 1px; flex: 1; min-height: 2rem; }
+.spine-line-1 { background: linear-gradient(to bottom, transparent, var(--accent4)); }
+.spine-line-2 { background: linear-gradient(to bottom, var(--accent4), var(--accent2)); }
+.spine-line-3 { background: linear-gradient(to bottom, var(--accent2), var(--accent1)); }
+.spine-line-4 { background: linear-gradient(to bottom, var(--accent1), var(--accent3)); }
+.spine-line-5 { background: linear-gradient(to bottom, var(--accent3), var(--accent5)); }
+.spine-line-end { background: linear-gradient(to bottom, var(--accent5), transparent); }
+
+.spine-node { width: 14px; height: 14px; border-radius: 50%; border: 2px solid; background: var(--bg); flex-shrink: 0; position: relative; transition: all 0.3s; cursor: pointer; }
+.spine-node.lit { box-shadow: 0 0 12px; }
+
+/* Stage colour classes */
+.s1 { --sc: var(--accent4); --sg: var(--glow4); }
+.s2 { --sc: var(--accent2); --sg: var(--glow2); }
+.s3 { --sc: var(--accent1); --sg: var(--glow1); }
+.s4 { --sc: var(--accent3); --sg: var(--glow3); }
+.s5 { --sc: var(--accent5); --sg: var(--glow5); }
+
+.spine-node { border-color: var(--sc); }
+.spine-node.lit { background: var(--sc); box-shadow: 0 0 12px var(--sc); }
+
+/* ── STAGE CARDS ── */
+.stage-item { margin-bottom: 3rem; }
+.stage-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 2rem 2.25rem; cursor: pointer; transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+}
+.stage-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--sc); opacity: 0; transition: opacity 0.3s; }
+.stage-card:hover { background: var(--surface-hover); border-color: var(--border-bright); transform: translateX(4px); }
+.stage-card.active { border-color: var(--border-bright); transform: translateX(4px); box-shadow: 0 0 30px var(--sg); }
+.stage-card.active::before { opacity: 1; }
+.stage-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+.stage-num { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.15em; color: var(--text-dimmer); text-transform: uppercase; }
+.stage-badge { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; padding: 0.2rem 0.65rem; border-radius: 2px; text-transform: uppercase; background: var(--sg); color: var(--sc); border: 1px solid var(--sc); }
+.stage-title-el { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--sc); }
+.stage-meta { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--text-dimmer); margin-bottom: 0.75rem; letter-spacing: 0.05em; }
+.stage-desc { color: var(--text-dim); font-size: 0.88rem; line-height: 1.6; margin-bottom: 0.85rem; }
+.stage-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.skill-tag { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; padding: 0.18rem 0.55rem; border-radius: 2px; border: 1px solid var(--border); color: var(--text-dimmer); text-transform: uppercase; }
+.stage-expand { display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.stage-card.active .stage-expand { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+.expand-item { background: rgba(255,255,255,0.03); border-radius: 4px; padding: 1rem; border: 1px solid var(--border); }
+.expand-item h4 { font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 0.45rem; }
+.expand-item p { font-size: 0.84rem; color: var(--text-dim); line-height: 1.5; }
+
+/* ── SKILL CARDS ── */
+.skills-section { background: rgba(255,255,255,0.012); }
+.skills-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2.5rem; }
+.tab-btn { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.45rem 1rem; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.2s; }
+.tab-btn:hover { border-color: var(--accent1); color: var(--text); }
+.tab-btn.active { background: var(--accent1); color: var(--bg); border-color: var(--accent1); font-weight: 500; transition: background 0.4s, border-color 0.4s; }
+
+.skill-panel { display: none; }
+.skill-panel.active { display: block; }
+.skill-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; }
+.skill-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; transition: all 0.2s; position: relative; overflow: hidden; }
+.skill-card:hover { border-color: var(--border-bright); background: var(--surface-hover); }
+.skill-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--sc-card, var(--accent1)); opacity: 0.5; }
+.skill-card svg { width: 22px; height: 22px; margin-bottom: 0.7rem; display: block; opacity: 0.6; }
+.skill-card-stage { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.3rem; }
+.skill-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.45rem; font-weight: 600; }
+.skill-card p { font-size: 0.84rem; color: var(--text-dim); line-height: 1.6; }
+.skill-progression { display: flex; gap: 0.25rem; margin-top: 0.75rem; }
+.prog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+.prog-dot.on { background: var(--sc-card, var(--accent1)); }
+
+/* ── CHECKLIST ── */
+.checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+.checklist-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.75rem; }
+.checklist-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.25rem; font-weight: 600; }
+.checklist-subtitle { font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 1.25rem; }
+.checklist-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+.checklist-item:last-of-type { border-bottom: none; }
+.check-box { width: 16px; height: 16px; border: 1px solid var(--border-bright); border-radius: 2px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 0.65rem; color: transparent; }
+.checklist-item:hover .check-box { border-color: var(--accent1); }
+.checklist-item.checked .check-box { background: var(--accent1); border-color: var(--accent1); color: var(--bg); transition: background 0.4s, border-color 0.4s; }
+.checklist-item.checked .check-text { color: var(--text-dimmer); text-decoration: line-through; }
+.check-text { font-size: 0.87rem; color: var(--text-dim); line-height: 1.5; transition: color 0.2s; }
+.checklist-progress { margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+.progress-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent1); border-radius: 2px; transition: width 0.4s ease, background 0.4s; width: 0%; }
+.progress-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text-dimmer); white-space: nowrap; }
+
+/* ── RUBRIC ── */
+.rubric-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 2rem; }
+.rubric-table th { font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dimmer); text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-bright); background: rgba(255,255,255,0.02); }
+.rubric-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-dim); vertical-align: top; line-height: 1.5; }
+.rubric-table tr:hover td { background: rgba(255,255,255,0.02); }
+.rubric-table td:first-child { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--text); font-weight: 600; white-space: nowrap; }
+.rubric-select { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.rubric-btn { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.35rem 0.85rem; border-radius: 2px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.2s; }
+.rubric-btn.active { background: var(--accent2); color: var(--bg); border-color: var(--accent2); }
+.rubric-overflow { overflow-x: auto; }
+
+/* ── PHRASES ── */
+.phrases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.25rem; }
+.phrase-group { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; }
+.phrase-group h3 { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent1); margin-bottom: 1rem; transition: color 0.4s; }
+.phrase-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.45rem 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+.phrase-item:last-child { border-bottom: none; }
+.phrase-text { font-size: 0.87rem; color: var(--text-dim); font-style: italic; line-height: 1.5; flex: 1; }
+.phrase-copy { font-size: 0.65rem; opacity: 0; color: var(--accent1); transition: opacity 0.2s; flex-shrink: 0; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+.phrase-item:hover .phrase-copy { opacity: 1; }
+.phrase-item:hover .phrase-text { color: var(--text); }
+.phrase-item.copied .phrase-copy { color: var(--accent4); opacity: 1; }
+
+/* ── ACTIVITIES ── */
+.activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; }
+.activity-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; transition: all 0.25s; cursor: pointer; }
+.activity-card:hover { background: var(--surface-hover); border-color: var(--border-bright); transform: translateY(-2px); }
+.activity-type { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.35rem; transition: color 0.4s; }
+.activity-card h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 0.45rem; }
+.activity-card p { font-size: 0.84rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 0.85rem; }
+.activity-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.activity-tag { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.08em; padding: 0.15rem 0.5rem; border-radius: 2px; border: 1px solid var(--border); color: var(--text-dimmer); text-transform: uppercase; }
+
+/* ── TIMER ── */
+.timer-layout { display: grid; grid-template-columns: auto 1fr; gap: 2.5rem; align-items: start; }
+.timer-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.75rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 230px; }
+.timer-arc { position: relative; }
+.arc-svg { transform: rotate(-90deg); }
+.arc-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+.arc-prog { fill: none; stroke: var(--accent1); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
+.timer-display { font-family: 'DM Mono', monospace; font-size: 2.4rem; letter-spacing: 0.06em; color: var(--accent1); line-height: 1; transition: color 0.4s; }
+.timer-label-el { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dimmer); }
+.timer-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+.t-preset { font-family: 'DM Mono', monospace; font-size: 0.63rem; padding: 0.3rem 0.65rem; border: 1px solid var(--border); border-radius: 2px; background: transparent; color: var(--text-dimmer); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.2s; }
+.t-preset:hover { border-color: var(--border-bright); color: var(--text-dim); }
+.t-preset.sel { background: var(--accent1); border-color: var(--accent1); color: var(--bg); transition: background 0.4s, border-color 0.4s; }
+.timer-btns { display: flex; gap: 0.5rem; }
+.t-btn { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1.1rem; border-radius: 3px; border: none; cursor: pointer; transition: all 0.2s; }
+.t-start { background: var(--accent1); color: var(--bg); transition: background 0.4s; }
+.t-start:hover { filter: brightness(1.12); }
+.t-reset { background: transparent; border: 1px solid var(--border); color: var(--text-dimmer); }
+.t-reset:hover { border-color: var(--border-bright); color: var(--text-dim); }
+.timer-activities { flex: 1; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(7,9,15,0.92); z-index: 200; align-items: center; justify-content: center; padding: 2rem; backdrop-filter: blur(6px); }
+.modal-overlay.open { display: flex; }
+.modal { background: #0f1320; border: 1px solid var(--border-bright); border-radius: 8px; max-width: 580px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2.25rem; position: relative; animation: slideUp 0.28s ease; }
+.modal-close { position: absolute; top: 1.1rem; right: 1.1rem; background: none; border: 1px solid var(--border); color: var(--text-dim); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.modal-close:hover { border-color: var(--accent5); color: var(--accent5); }
+.modal-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+.modal h2 { font-family: 'Playfair Display', serif; font-size: 1.55rem; margin-bottom: 1.25rem; }
+.modal-body { color: var(--text-dim); font-size: 0.88rem; line-height: 1.7; }
+.modal-body p { margin-bottom: 0.8rem; }
+.modal-body p:last-child { margin: 0; }
+.modal-body ol, .modal-body ul { margin: 0.5rem 0 0.8rem 1.15rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.modal-body strong { color: var(--text); font-weight: 500; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 300; background: var(--accent4); color: var(--bg); font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; padding: 0.5rem 1rem; border-radius: 3px; opacity: 0; transform: translateY(6px); transition: all 0.22s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── FOOTER ── */
+footer { border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; position: relative; z-index: 1; }
+footer p { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text-dimmer); }
+.footer-brand { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text-dim); margin-bottom: 0.4rem; font-style: italic; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.reveal { opacity: 0; transform: translateY(22px); transition: all 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── DIVIDER ── */
+.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-links.open { display: flex; position: fixed; top: 56px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(7,9,15,0.97); border-bottom: 1px solid var(--border); padding: 1rem 0; }
+  .nav-links.open a { padding: 0.75rem 2rem; display: block; }
+  .timer-layout { grid-template-columns: 1fr; }
+  .timer-panel { width: 100%; }
+  .ascent-wrapper { grid-template-columns: 32px 1fr; gap: 0 1rem; }
+  .hero { padding-top: 10rem; }
+}
+@media (max-width: 580px) {
+  .skill-card-grid { grid-template-columns: 1fr; }
+  .checklist-grid { grid-template-columns: 1fr; }
+  .phrases-grid { grid-template-columns: 1fr; }
+  .activities-grid { grid-template-columns: 1fr; }
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<canvas id="canvas-bg"></canvas>
+
+<nav>
+  <div class="nav-brand">How to Give a Presentation</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#framework">Framework</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#checklist">Checklist</a></li>
+    <li><a href="#rubric">Rubric</a></li>
+    <li><a href="#phrases">Phrases</a></li>
+    <li><a href="#practice">Practice</a></li>
+  </ul>
+  <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+</nav>
+
+<div class="stage-switcher" id="stageSwitcher">
+  <button class="stage-btn active" data-s="1" onclick="setStage(1)"><span class="sn">Stage 1</span><span class="st">Show & Tell</span><span class="sg">Grades 1–4</span></button>
+  <button class="stage-btn" data-s="2" onclick="setStage(2)"><span class="sn">Stage 2</span><span class="st">Organised</span><span class="sg">Grades 5–7</span></button>
+  <button class="stage-btn" data-s="3" onclick="setStage(3)"><span class="sn">Stage 3</span><span class="st">Engager</span><span class="sg">Grades 8–9</span></button>
+  <button class="stage-btn" data-s="4" onclick="setStage(4)"><span class="sn">Stage 4</span><span class="st">Academic</span><span class="sg">Grades 10–12</span></button>
+  <button class="stage-btn" data-s="5" onclick="setStage(5)"><span class="sn">Stage 5</span><span class="st">Professional</span><span class="sg">Graduation+</span></button>
+</div>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow" id="heroEyebrow">Stage 1 · Show and Tell · Grades 1–4</div>
+    <h1>How to Give a <em>Presentation</em></h1>
+    <p class="hero-subtitle" id="heroSub">Stand up, speak up, and share something you care about.</p>
+    <div class="hero-cta">
+      <a href="#framework" class="btn btn-primary">Explore the framework →</a>
+      <a href="#checklist" class="btn btn-ghost">Jump to checklist</a>
+    </div>
+    <div class="start-box">
+      <div class="start-box-label" id="startLabel">How to start — right now</div>
+      <div class="start-box-title" id="startTitle">Three things to do now</div>
+      <ul class="start-box-steps" id="startSteps"></ul>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- FRAMEWORK -->
+<section id="framework">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Framework</div>
+      <h2 class="section-title">Five stages of mastery</h2>
+      <p class="section-intro" id="frameworkIntro">The same skills appear at every stage. Click any card to see more.</p>
+    </div>
+
+    <div class="ascent-wrapper reveal">
+      <div class="ascent-spine">
+        <div class="spine-line spine-line-1" style="height:2rem"></div>
+        <div class="spine-node s1" id="sn0" onclick="toggleStageCard(0)"></div>
+        <div class="spine-line spine-line-2"></div>
+        <div class="spine-node s2" id="sn1" onclick="toggleStageCard(1)"></div>
+        <div class="spine-line spine-line-3"></div>
+        <div class="spine-node s3" id="sn2" onclick="toggleStageCard(2)"></div>
+        <div class="spine-line spine-line-4"></div>
+        <div class="spine-node s4" id="sn3" onclick="toggleStageCard(3)"></div>
+        <div class="spine-line spine-line-5"></div>
+        <div class="spine-node s5" id="sn4" onclick="toggleStageCard(4)"></div>
+        <div class="spine-line spine-line-end" style="height:2rem"></div>
+      </div>
+      <div id="stageCardList"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- SKILLS -->
+<section id="skills" class="skills-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Core Skills</div>
+      <h2 class="section-title">Eight disciplines</h2>
+      <p class="section-intro">Each skill is practised at every stage. Select one to see how it develops.</p>
+    </div>
+    <div class="skills-tabs reveal" id="skillTabs">
+      <button class="tab-btn active" onclick="switchSkill('planning',this)">Planning</button>
+      <button class="tab-btn" onclick="switchSkill('structure',this)">Structure</button>
+      <button class="tab-btn" onclick="switchSkill('slides',this)">Slides</button>
+      <button class="tab-btn" onclick="switchSkill('voice',this)">Voice</button>
+      <button class="tab-btn" onclick="switchSkill('nerves',this)">Nerves</button>
+      <button class="tab-btn" onclick="switchSkill('engagement',this)">Engagement</button>
+      <button class="tab-btn" onclick="switchSkill('questions',this)">Questions</button>
+      <button class="tab-btn" onclick="switchSkill('reflection',this)">Reflection</button>
+    </div>
+    <div id="skillPanels" class="reveal"></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- CHECKLIST -->
+<section id="checklist">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Preparation</div>
+      <h2 class="section-title">Before you present</h2>
+      <p class="section-intro" id="checklistIntro">Tick each item as you go.</p>
+    </div>
+    <div class="checklist-grid reveal" id="checklistGrid"></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- RUBRIC -->
+<section id="rubric" style="background:rgba(255,255,255,0.01)">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Assessment</div>
+      <h2 class="section-title">Presentation rubric</h2>
+      <p class="section-intro">Assess yourself or give structured feedback to a peer.</p>
+    </div>
+    <div class="rubric-select reveal">
+      <button class="rubric-btn" onclick="selectRubric('s1',this)">Stage 1</button>
+      <button class="rubric-btn active" onclick="selectRubric('s3',this)">Stage 3</button>
+      <button class="rubric-btn" onclick="selectRubric('s5',this)">Stage 5</button>
+    </div>
+    <div class="rubric-overflow reveal">
+      <table class="rubric-table">
+        <thead><tr><th>Criterion</th><th>Beginning</th><th>Developing</th><th>Proficient</th><th>Excellent</th></tr></thead>
+        <tbody id="rubricBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- PHRASES -->
+<section id="phrases">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Language</div>
+      <h2 class="section-title">Useful phrases</h2>
+      <p class="section-intro" id="phrasesIntro">Tap any phrase to copy it. Adapt it — don't memorise it.</p>
+    </div>
+    <div class="phrases-grid reveal" id="phrasesGrid"></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- PRACTICE -->
+<section id="practice">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Practice</div>
+      <h2 class="section-title">Activities &amp; timer</h2>
+      <p class="section-intro">Use the timer with any activity. Click an activity card for full instructions.</p>
+    </div>
+
+    <div class="timer-layout reveal">
+      <div>
+        <div class="section-label" style="margin-bottom:0.75rem">Practice timer</div>
+        <div class="timer-panel">
+          <div class="timer-arc">
+            <svg class="arc-svg" width="100" height="100" viewBox="0 0 100 100">
+              <circle class="arc-bg" cx="50" cy="50" r="44"/>
+              <circle class="arc-prog" id="arcProg" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/>
+            </svg>
+          </div>
+          <div class="timer-display" id="timerDisp">02:00</div>
+          <div class="timer-label-el" id="timerLbl">Ready</div>
+          <div class="timer-presets">
+            <button class="t-preset" onclick="setTimer(60,this)">1 min</button>
+            <button class="t-preset sel" onclick="setTimer(120,this)">2 min</button>
+            <button class="t-preset" onclick="setTimer(180,this)">3 min</button>
+            <button class="t-preset" onclick="setTimer(300,this)">5 min</button>
+            <button class="t-preset" onclick="setTimer(480,this)">8 min</button>
+          </div>
+          <div class="timer-btns">
+            <button class="t-btn t-start" id="timerStartBtn" onclick="timerToggle()">Start</button>
+            <button class="t-btn t-reset" onclick="timerReset()">Reset</button>
+          </div>
+        </div>
+      </div>
+      <div class="timer-activities">
+        <div class="section-label" style="margin-bottom:0.75rem">Activities</div>
+        <div class="activities-grid" id="activitiesGrid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">How to Give a Presentation</div>
+    <p>Speak with clarity, confidence, and impact · One framework, five reading levels</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalInner"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+
+const STAGE_COLOURS = ['accent4','accent2','accent1','accent3','accent5'];
+const STAGE_GLOWS   = ['glow4','glow2','glow1','glow3','glow5'];
+
+const HERO = {
+  1:{ eyebrow:'Stage 1 · Show and Tell · Grades 1–4', sub:'Stand up, speak up, and share something you care about.', startTitle:'Three things to do now', steps:['Choose a topic you genuinely like.','Practise saying it out loud — not just in your head.','Find out where you will stand and how loud you need to be.'] },
+  2:{ eyebrow:'Stage 2 · Organised Speaker · Grades 5–7', sub:'Plan your talk. Give it a clear beginning, middle, and end.', startTitle:'Before your talk', steps:['Write down your three main points — in order.','Practise at least twice out loud.','Know your first sentence before you begin.'] },
+  3:{ eyebrow:'Stage 3 · Audience Engager · Grades 8–9', sub:'Speak clearly. Reach your audience. Make your ideas land.', startTitle:'Before your next presentation', steps:['Identify your audience — what do they already know?','Write your opening sentence: a question or a surprising fact.','Practise in front of at least one person. Ask for one piece of feedback.'] },
+  4:{ eyebrow:'Stage 4 · Academic Presenter · Grades 10–12', sub:'Build an argument. Support it with evidence. Invite challenge.', startTitle:'Preparing an academic presentation', steps:['Write your thesis in one sentence before building anything else.','For each main point, identify evidence and acknowledge counter-arguments.','Practise the Q&A — anticipate the two hardest questions you might face.'] },
+  5:{ eyebrow:'Stage 5 · Professional Communicator · Graduation+', sub:'Preparation becomes instinct. Every skill integrates into presence.', startTitle:'Approaching any presentation', steps:['Define the single thing you want your audience to think or do differently.','Identify the hardest question you might face — and your honest answer.','Know when you might deviate from your plan and how you will recover.'] }
+};
+
+const FRAMEWORK = [
+  { sClass:'s1', num:'Stage 01', badge:'Primary · Grades 1–4', name:'Show and Tell', meta:'Ages 6–10 · Emerging Communicator',
+    tags:['Speaking clearly','Eye contact','Beginning + end','Volume','Choosing a topic'],
+    descs:{ 1:'Stand up. Speak up. Share something you care about. That is where every presenter begins.', 2:'Stand up. Speak up. Share something you care about. That is where every presenter begins.', 3:'Foundation stage: voice, eye contact, and a clear beginning and end. Every later skill is built on this.', 4:'The foundational habits built here are what all higher-stage performance relies on.', 5:'Stage 1 instincts — volume, contact, presence — are what mastery integrates most deeply.' },
+    focus:{ 1:'Loud enough voice. Eye contact. Know how to start and stop.', 2:'Loud enough voice. Eye contact. Know how to start and stop.', 3:'The habits built here underpin every stage that follows.', 4:'The habits built here underpin every stage that follows.', 5:'Integration of these instincts is the foundation of professional presence.' },
+    success:{ 1:'The audience knows what you brought and why it matters to you.', 2:'The audience knows what you brought and why it matters to you.', 3:'The audience knows the topic, the speaker\'s interest, and the main idea.', 4:'The audience understands the purpose and the speaker\'s relationship to the material.', 5:'Clarity of purpose is established within the first 30 seconds.' },
+    challenge:{ 1:'Bring one object. Tell us what it is and why it matters to you.', 2:'Bring one object. Tell us what it is and why it matters to you.', 3:'Observe a Stage 1 presenter. Which foundational habits do you still rely on at Stage 3?', 4:'Identify which Stage 1 habits are now automatic — and which are still deliberate.', 5:'Reflect: which Stage 1 habits are now invisible in your performance? Which still take effort?' }
+  },
+  { sClass:'s2', num:'Stage 02', badge:'Lower Secondary · Grades 5–7', name:'Organised Speaker', meta:'Ages 10–13 · Developing Communicator',
+    tags:['Introduction + conclusion','Main points','Notes vs. reading','Pace','Slide basics'],
+    descs:{ 1:'We learn to give our talk a shape — beginning, middle, and end.', 2:'Plan your talk. Give it a clear shape — beginning, middle, end — and practise it out loud.', 3:'Structure becomes a tool the speaker can rely on every time.', 4:'The three-part structure established here is the scaffold for all academic argumentation.', 5:'Automatic structural sense — knowing when to open, turn, and close — is Stage 2 made instinctive.' },
+    focus:{ 1:'Three clear sections. Notes as prompts. Pause between ideas.', 2:'Three clear sections. Notes as prompts, not scripts. Pause between ideas.', 3:'Signposting, transitions, and fitting a time limit.', 4:'Structure serves the argument rather than constraining it.', 5:'Structure is invisible. The audience feels momentum, not framework.' },
+    success:{ 1:'The audience can follow every step without getting lost.', 2:'The audience can follow every step without getting lost.', 3:'The audience leaves knowing exactly what the three sections were.', 4:'The structure makes the argument feel inevitable.', 5:'The structure is felt, not noticed.' },
+    challenge:{ 1:'3-minute talk, any topic. Notes: five words only.', 2:'3-minute talk, any topic. Notes: five words only. No reading allowed.', 3:'Give the same talk with three different structural approaches. Which works best for this content?', 4:'Rebuild an unstructured argument from a peer\'s draft into a coherent three-part structure.', 5:'Deliver an 8-minute talk with no notes and a structure your audience can articulate afterwards.' }
+  },
+  { sClass:'s3', num:'Stage 03', badge:'Middle Secondary · Grades 8–9', name:'Audience Engager', meta:'Ages 13–15 · Confident Communicator',
+    tags:['Rhetorical questions','Adapting register','Visual storytelling','Managing nerves','Q&A basics'],
+    descs:{ 1:'One day we will learn to think about who is listening, not just what we say.', 2:'We start to think about who is listening and what they need from us.', 3:'Think about who is listening. Adapt your language, your examples, and your pace to keep them with you.', 4:'Audience awareness at this stage is essential to argument effectiveness.', 5:'Professional communication is real-time audience analysis — continuous, invisible, instinctive.' },
+    focus:{ 1:'Asking: who is listening and what do they like?', 2:'Adapting your language. Using questions and examples to hold attention.', 3:'Adapting language, tone, and examples to a specific audience.', 4:'Audience analysis should precede content planning, not follow it.', 5:'Adaptation is continuous, invisible, and instinctive.' },
+    success:{ 1:'The audience feels like you are talking to them, not at them.', 2:'The audience feels spoken to, not at.', 3:'Different audiences receive versions of the talk genuinely tailored to their needs.', 4:'The argument lands differently for different audiences — and the speaker controls how.', 5:'Every audience believes the talk was designed specifically for them.' },
+    challenge:{ 1:'Give your talk to a younger student. What do you change?', 2:'Give the same 2-minute talk to a peer, then to a teacher. Note every change you make.', 3:'Give the same talk to three different audiences. Map every adaptation.', 4:'Deliver to a specialist audience. Justify every linguistic choice you made for them.', 5:'Navigate a room with mixed expertise — without anyone feeling lost or condescended to.' }
+  },
+  { sClass:'s4', num:'Stage 04', badge:'Upper Secondary · Grades 10–12', name:'Academic Presenter', meta:'Ages 15–18 · Articulate Communicator',
+    tags:['Thesis-driven argument','Citing evidence verbally','Handling pushback','Timed delivery','Concision'],
+    descs:{ 1:'We will learn to make arguments and support them with evidence.', 2:'We build towards making clear arguments with evidence and handling questions well.', 3:'Academic presentation adds thesis, evidence, and structured argument to everything we have already learned.', 4:'Make an argument. Support it with evidence. Handle challenge well. The slides are minimal — the thinking does the work.', 5:'Stage 4 is where intellectual authority begins to form. It is the platform on which Stage 5 is built.' },
+    focus:{ 1:'What is an argument? What is evidence?', 2:'How do you support what you say with evidence?', 3:'Lead with a thesis. Evidence every claim. Acknowledge counter-arguments.', 4:'Lead with a thesis. Evidence every claim. Acknowledge counter-arguments rather than ignoring them.', 5:'Intellectual rigour without performative complexity.' },
+    success:{ 1:'The audience understands what you think and one reason why.', 2:'The audience understands your main point and one piece of evidence.', 3:'The audience can articulate the argument and identify its evidence.', 4:'The audience understands the position and its strongest challenge.', 5:'The audience leaves with a more precise version of the question than when they arrived.' },
+    challenge:{ 1:'Tell us what you think about something — and one reason why.', 2:'Make a claim. Give two pieces of evidence. Explain why they matter.', 3:'Present a position you personally disagree with, as convincingly as possible.', 4:'Present a position you personally disagree with, as convincingly as possible.', 5:'Deliver a position on a contested question, acknowledge its strongest counter-argument, and close persuasively.' }
+  },
+  { sClass:'s5', num:'Stage 05', badge:'Graduation · Beyond', name:'Professional Communicator', meta:'Age 18+ · Mastery Level',
+    tags:['Presence','Improvisation','Cross-cultural fluency','Narrative','Strategic silence'],
+    descs:{ 1:'One day, all of this will feel completely natural. Every great communicator started at Stage 1.', 2:'This is the goal — everything you practise now builds towards this.', 3:'All eight skills become integrated into a single, fluid performance. The audience experiences conversation, not mechanics.', 4:'Technique integrates into instinct. Preparation becomes presence. The work is invisible; the impact is not.', 5:'Preparation is instinct. Every skill from Stages 1–4 is available automatically, deployed with judgment.' },
+    focus:{ 1:'It takes time. Keep going.', 2:'Every skill you practise now is building towards this.', 3:'Reading the room. Adapting in real time. Making the preparation invisible.', 4:'Reading the room and adapting in real time. Every skill from Stages 1–4 now available automatically.', 5:'The internal observer. Real-time adaptation. The gap between intention and effect is minimal.' },
+    success:{ 1:'You stood up. You spoke. You will get better every time.', 2:'You can see how everything you practise is taking you somewhere.', 3:'The audience experiences a conversation, not a performance.', 4:'The audience experiences a conversation, not a performance. The preparation is invisible.', 5:'The audience cannot locate the technique — only the effect.' },
+    challenge:{ 1:'Keep going. Practise whenever you can.', 2:'Review your Stage 1 and 2 checklists. Which items no longer feel difficult?', 3:'Speak for 5 minutes on a topic given 60 seconds ago.', 4:'Speak for 5 minutes on a topic given 60 seconds ago. Be clear, present, and useful.', 5:'After any presentation, write 3 sentences immediately on the gap between what you intended and what the audience received.' }
+  }
+];
+
+const SKILLS = {
+  planning:{ label:'Planning & Research', icon:'plan', cards:[
+    { title:'Topic & purpose', bodies:['Pick something you like.','Choose a topic. Write 3 things you know about it.','Ask before planning: who is my audience and what do they need?','Write your thesis before anything else. Every decision follows from it.','Define what you want your audience to think or do differently.'] },
+    { title:'Research', bodies:['Find 2 facts about your topic.','Use at least 2 sources. Take notes in your own words.','Cross-check sources. Distinguish fact from opinion.','Every claim needs evidence. Acknowledge what you cannot prove.','Know the field well enough to identify the most contested questions.'] },
+    { title:'Notes', bodies:['Draw or write the 3 most important things.','Bullet points only — no full sentences.','Five key words per section maximum.','Notes as structural anchors only. The argument lives in your thinking.','No notes, or one card. Full command of material required.'] }
+  ]},
+  structure:{ label:'Structure', icon:'struct', cards:[
+    { title:'Beginning & ending', bodies:['Say what it is. Say goodbye.','Start with a hook. End with a clear summary.','Your opening earns attention. Your ending delivers something worth remembering.','Thesis-first. Conclusion that extends, not just summarises.','Begin and end with intention. The audience should feel a complete journey.'] },
+    { title:'Signposting', bodies:['"First… then… finally…"','Tell the audience what comes next.','Use phrases like "Building on this…" to guide your audience.','Transitions do argumentative work, not just signal movement.','Structure becomes invisible. The audience feels momentum, not mechanics.'] },
+    { title:'Timing', bodies:['Try to finish when you are supposed to.','Practise to fit the time. Know which part to shorten.','Time each section separately. Know where you lose minutes.','Leave space for questions. Practise under time pressure.','Command of time signals command of content.'] }
+  ]},
+  slides:{ label:'Slide Design', icon:'slide', cards:[
+    { title:'Text on slides', bodies:['No slides needed yet.','One idea per slide. Big text, few words.','Slides support your voice — they do not replace it.','Minimal text. One key claim per slide. Sources cited.','Fewer slides, greater impact. Restraint is a design choice.'] },
+    { title:'Images', bodies:['A drawing or photo is fine.','Use a picture that helps explain your idea.','Choose images that carry meaning, not decoration.','Data visualised well tells a story that a table cannot.','One well-chosen image outperforms five adequate ones.'] },
+    { title:'Design basics', bodies:['Make it clear enough to read.','Font large enough to read from the back of the room.','Consistent colours and fonts. No clutter.','Every element is a choice. Remove what doesn\'t earn its place.','Slide design reflects the rigour of the argument.'] }
+  ]},
+  voice:{ label:'Voice & Body', icon:'voice', cards:[
+    { title:'Volume & clarity', bodies:['Speak so everyone can hear.','Slow down. Say every word clearly.','Vary your volume — quiet draws attention, loud signals importance.','Every word should be worth hearing.','Economy of word. Full weight of intention.'] },
+    { title:'Pausing', bodies:['Stop talking at the end of a sentence.','Leave a gap after each main point.','A pause is punctuation. Use it deliberately.','Pause before your most important claims. Let them land.','Strategic silence is as powerful as strategic speech.'] },
+    { title:'Body language', bodies:['Stand still. Look at the audience.','Don\'t look at your feet or the ceiling.','Stillness signals confidence. Move with purpose, not habit.','Posture, gesture, and eye contact communicate before you speak.','Physical presence amplifies intellectual authority.'] }
+  ]},
+  nerves:{ label:'Managing Nerves', icon:'nerve', cards:[
+    { title:'Why we feel nervous', bodies:['It is normal. Everyone feels it.','Nerves mean you care. That is a good thing.','Nervousness and excitement feel almost the same. Try renaming it.','Nerves signal that stakes are real. Use the energy.','Nerves become heightened presence at mastery level.'] },
+    { title:'What to do', bodies:['Take 3 slow breaths before you start.','Know your first sentence by heart before you begin.','Develop a pre-presentation routine — breath, stillness, or a phrase.','Prepare so thoroughly that uncertainty disappears. What remains is energy.','The ritual is personal, consistent, and signals readiness to yourself.'] },
+    { title:'Preparation helps', bodies:['Practise at home, out loud.','The more you practise, the less nervous you feel.','Fear lives in the unknown. Remove unknowns through preparation.','Anticipate your hardest moment and rehearse through it specifically.','Overprepare for the parts most likely to fail.'] }
+  ]},
+  engagement:{ label:'Audience Engagement', icon:'engage', cards:[
+    { title:'Getting attention', bodies:['Talk about something interesting to you.','Start with a question or a surprising fact.','Hook your audience in the first 30 seconds.','Your opening must earn trust before it earns attention.','The audience decides in 20 seconds whether to invest. Win them.'] },
+    { title:'Keeping attention', bodies:['Use their names. Make eye contact.','Change your voice. Ask a question.','Rhetorical questions, direct address, real-life examples.','Manage complexity — accessible without being simplified.','Read micro-signals and adjust in real time.'] },
+    { title:'Adapting', bodies:['Talk like you\'re talking to a friend.','Think about what your audience already knows.','Different audiences need different language, pace, and examples.','Audience analysis should precede content planning.','The professional adapts everything — without the audience noticing.'] }
+  ]},
+  questions:{ label:'Handling Questions', icon:'qa', cards:[
+    { title:'When you don\'t know', bodies:['"I don\'t know" is fine.','"I\'m not sure — I\'ll find out."','Say "I don\'t have a confident answer, but here\'s how I\'d begin to think about it."','Acknowledge the limit of your knowledge precisely — it builds credibility.','A well-framed "I don\'t know" is more convincing than a poor improvised answer.'] },
+    { title:'Buying time', bodies:['Ask them to say it again.','Repeat the question back to check you understood.','Use phrases like "That\'s a fair question…" to gain a moment to think.','Restate in your own terms — it signals careful listening.','Silence before answering signals thought, not ignorance.'] },
+    { title:'Handling challenge', bodies:['It\'s OK if someone disagrees.','"That\'s interesting. I think…" is a good start.','Disagree clearly and politely. Don\'t change your view under social pressure.','Treat challenge as evidence your argument is worth disputing.','Invite the hardest question. Use it to extend the argument.'] }
+  ]},
+  reflection:{ label:'Practice & Reflection', icon:'reflect', cards:[
+    { title:'After every presentation', bodies:['Name one thing that went well.','One thing worked. One thing to improve next time.','Identify when you felt most in control — and when you felt least.','Separate performance anxiety from actual content or structure weaknesses.','The internal observer monitors in real time. Reflection is continuous.'] },
+    { title:'Recording yourself', bodies:['Watch it once.','Watch with sound off first. Then listen with eyes closed.','Watch twice: body language only, then voice only. Write three things each.','Look for patterns across recordings, not single moments.','Use recording to calibrate the gap between intention and effect.'] },
+    { title:'Getting feedback', bodies:['Ask someone: "What was good?"','Ask: "What is one thing I could do better?"','Ask for specific feedback on one skill — not general impressions.','Brief a peer to watch for one particular weakness and report precisely.','Seek out the critic, not the supporter. Growth lives in friction.'] }
+  ]}
+};
+
+const CHECKLISTS = {
+  1:[
+    { title:'Content', sub:'Are you ready?', items:['I know what I am going to talk about.','I know why it matters to me.','I have practised saying it out loud.'] },
+    { title:'Delivery', sub:'Before you go up', items:['I know where I will stand.','I will speak loudly enough.','I know how to start and when to stop.'] }
+  ],
+  2:[
+    { title:'Content', sub:'Is your talk ready?', items:['I have 3 clear main points.','I have a strong opening.','I have a clear ending.','I have practised twice out loud.'] },
+    { title:'Delivery', sub:'Before you present', items:['My notes are key words only.','I know my first sentence by heart.','I have timed myself and fit the limit.'] },
+    { title:'After', sub:'Reflection', items:['I noticed one thing that worked.','I have one thing to improve next time.'] }
+  ],
+  3:[
+    { title:'Content', sub:'Is your message ready?', items:['I know my main message in one sentence.','My opening will engage the audience immediately.','Each main point has a clear example or evidence.','My conclusion does more than summarise.','I have timed myself and fit the limit.'] },
+    { title:'Slides', sub:'Is your design working?', items:['Each slide has one idea.','Text is readable from the back.','I am not reading from my slides.','Images are relevant, not decorative.'] },
+    { title:'Delivery', sub:'Am I ready?', items:['I have practised aloud at least three times.','I have practised in front of at least one person.','I have anticipated two likely questions.'] },
+    { title:'After', sub:'Reflection', items:['One thing that went well.','One specific thing to improve.','I noted feedback from at least one person.'] }
+  ],
+  4:[
+    { title:'Argument', sub:'Is your case solid?', items:['My thesis is clear in one sentence.','Every claim is supported by evidence.','I acknowledge at least one counter-argument.','My conclusion extends beyond summary.'] },
+    { title:'Preparation', sub:'Am I fully ready?', items:['I have practised the full presentation.','I have timed each section separately.','I have rehearsed through my weakest moment.','I have prepared for the two hardest Q&A challenges.'] },
+    { title:'Slides', sub:'Does the design serve the argument?', items:['Minimal text — ideas carry the weight.','All sources are attributed.','No slide undermines the argument\'s credibility.'] },
+    { title:'Reflection', sub:'After the presentation', items:['I separated performance anxiety from substantive weaknesses.','I received and recorded specific feedback.','I identified the one change that would most improve the next version.'] }
+  ],
+  5:[
+    { title:'Strategic clarity', sub:'Before you begin', items:['I can state the single outcome I want in one sentence.','I know which section is most likely to fail and have a contingency.','I have defined what success looks like for this specific audience.'] },
+    { title:'Command', sub:'Content & delivery', items:['I know the content well enough to depart from my plan.','I have identified the hardest possible question and my honest answer.','I have rehearsed the opening until it is fully internalised.'] },
+    { title:'Reflection', sub:'After any presentation', items:['I can distinguish what I intended from what the audience received.','I have identified the gap between effect and intention.','I know the single intervention that would close that gap.'] }
+  ]
+};
+
+const PHRASES = {
+  1:[
+    { title:'Opening', phrases:['"Today I am going to tell you about…"','"I brought something to show you."','"This is special to me because…"'] },
+    { title:'Ending', phrases:['"That\'s everything I wanted to share."','"Thank you for listening."','"Does anyone have a question?"'] }
+  ],
+  2:[
+    { title:'Opening', phrases:['"Today I want to talk about…"','"Did you know that…?"','"I have three things to tell you."'] },
+    { title:'Connecting ideas', phrases:['"My first point is…"','"Moving on to my second point…"','"Finally…"'] },
+    { title:'Ending', phrases:['"So to sum up…"','"The most important thing to remember is…"','"I\'m happy to take questions."'] }
+  ],
+  3:[
+    { title:'Opening', phrases:['"Today I want to explore the question of…"','"Let me start with something that surprised me."','"By the end of this, I hope you\'ll see… differently."'] },
+    { title:'Signposting', phrases:['"This leads me to my second point…"','"Before I continue, it\'s worth pausing here."','"To put it differently…"'] },
+    { title:'Engaging the audience', phrases:['"Imagine for a moment that…"','"You may already be thinking…"','"I want to complicate that assumption slightly."'] },
+    { title:'Ending & Q&A', phrases:['"Let me bring these ideas together."','"The question I want to leave you with is…"','"That\'s a fair question — let me answer it directly."'] }
+  ],
+  4:[
+    { title:'Thesis & argument', phrases:['"My central argument is that…"','"The evidence suggests three things. First…"','"I want to acknowledge a tension in this argument."'] },
+    { title:'Evidence', phrases:['"According to [source], the data indicates…"','"This is significant because…"','"It is worth noting that this finding is contested."'] },
+    { title:'Counter-argument', phrases:['"One might object that…"','"A fair counter-argument is… however…"','"This doesn\'t resolve the question of… but it does…"'] },
+    { title:'Q&A', phrases:['"That\'s a fair challenge. Here is my direct response."','"I don\'t have a confident answer, but here\'s how I\'d begin."','"Could you say more about what you mean by…?"'] }
+  ],
+  5:[
+    { title:'Framing', phrases:['"I\'ll state my position at the outset — and then complicate it."','"The question most people ask is X. I think the harder question is Y."','"What I want to put to you is not a conclusion but a reorientation."'] },
+    { title:'Precision', phrases:['"Let me be precise about what I\'m claiming and what I\'m not."','"The numbers are suggestive, not definitive."','"That distinction matters — here\'s why."'] },
+    { title:'Q&A at mastery', phrases:['"That\'s a better question than the one I was answering."','"Let me use that challenge to extend the argument."','"I think we\'re in more agreement than it appears — the real disagreement is about…"'] },
+    { title:'Closing', phrases:['"What I want to leave you with is not an answer but a better question."','"The work this argument still has to do is…"','"I\'m more interested in your disagreements than your agreements."'] }
+  ]
+};
+
+const ACTIVITIES = {
+  1:[
+    { type:'Voice', title:'Loud & Clear', body:'Practise your talk out loud — to a mirror, a sibling, or a toy. Make sure every word is clear.', tags:['2 min','Solo'],
+      modal:'<p>Stand up straight.</p><ol><li>Say your talk all the way through, out loud.</li><li>Ask yourself: could someone at the back of the room hear me?</li><li>Do it again, louder.</li></ol><p><strong>Note:</strong> It feels embarrassing to practise. Do it anyway. That is how everyone gets better.</p>' },
+    { type:'Confidence', title:'One Sentence', body:'Can you say what your talk is about in one clear sentence? Practise until you can say it without stopping.', tags:['1 min','Solo or pair'],
+      modal:'<p>Finish this sentence out loud: <em>"My talk is about…"</em></p><ol><li>Say it five times in a row.</li><li>Say it to another person.</li></ol><p><strong>Note:</strong> If you can say it clearly in one sentence, you understand it.</p>' }
+  ],
+  2:[
+    { type:'Structure', title:'Five-Word Notes', body:'A 3-minute talk using only five words as your notes. No reading allowed.', tags:['3 min','Solo'],
+      modal:'<p>Prepare a talk on any topic.</p><ol><li>Write exactly five key words on one card.</li><li>Practise talking through each word.</li><li>Deliver it without looking at the card more than twice.</li></ol><p><strong>Note:</strong> If you need more than five words, you are writing a script, not notes.</p>' },
+    { type:'Delivery', title:'Pause Practice', body:'Every time you finish a sentence, count silently to two before starting the next.', tags:['3 min','Solo or observed'],
+      modal:'<ol><li>Prepare a short talk.</li><li>Rule: count silently to two after every sentence.</li><li>Do not fill the gap with "um" or "so."</li><li>Notice how much clearer it sounds.</li></ol><p><strong>Note:</strong> Pauses feel very long to the speaker. To the audience, they feel like confidence.</p>' }
+  ],
+  3:[
+    { type:'Audience', title:'Two Audiences', body:'Give the same 3-minute talk twice — once to a peer, once to a teacher. Note every change you make.', tags:['10 min','Pair'],
+      modal:'<ol><li>Prepare a 3-minute talk on any topic.</li><li>Deliver to a classmate playing a complete beginner.</li><li>Deliver the same talk to someone playing a sceptical expert.</li><li>List every change: language, examples, pace, tone.</li></ol><p><strong>Debrief:</strong> Was the content actually different — or only the language?</p>' },
+    { type:'Delivery', title:'Deliberate Pause', body:'Deliver a 2-minute talk with a rule: pause for a full 3 seconds at least four times.', tags:['2–3 min','Solo or observed'],
+      modal:'<ol><li>Prepare any short talk.</li><li>Pause — fully — for a count of three at least four times.</li><li>Place pauses after key claims or before new sections.</li><li>Advanced: replace every filler word with silence instead.</li></ol><p><strong>Note:</strong> The first pause feels very long. Your audience experiences it as about two seconds.</p>' },
+    { type:'Reflection', title:'Record & Watch', body:'Record yourself. Watch once with sound off. Watch once with eyes closed. Write three observations.', tags:['15 min','Solo'],
+      modal:'<ol><li>Record a 3-minute talk, phone propped at eye level.</li><li>Watch with sound off — body language only. Write 2 observations.</li><li>Watch with eyes closed — voice only. Write 2 more.</li><li>Watch normally. What do you notice now?</li></ol><p><strong>Note:</strong> Look for patterns, not single moments. And find what actually worked.</p>' }
+  ],
+  4:[
+    { type:'Argument', title:'Argue the Opposite', body:'Present a position you genuinely disagree with, as convincingly as possible.', tags:['5–8 min','Pair'],
+      modal:'<ol><li>Choose a topic you have a real opinion on.</li><li>Prepare the strongest possible version of the opposing argument.</li><li>Deliver it for 3 minutes as if you believed it.</li><li>Debrief: what was convincing? What gave you away?</li></ol><p><strong>Advanced:</strong> Don\'t reveal your real view. Ask the audience to decide, then tell them.</p>' },
+    { type:'Q&A', title:'Hostile Panel', body:'After a 4-minute presentation, face 5 minutes of genuine challenge from a prepared panel.', tags:['10 min','Group'],
+      modal:'<ol><li>Deliver a 4-minute presentation.</li><li>Face 5 minutes of Q&A from a panel briefed to challenge your argument and evidence.</li><li>Panel must include: one disagreement with your conclusion, one question about evidence you omitted.</li><li>Debrief: which question were you least prepared for?</li></ol><p><strong>Note:</strong> The best panel question takes your argument seriously enough to dispute it.</p>' },
+    { type:'Engagement', title:'30-Second Hooks', body:'Write five different openings for the same talk. Deliver all five and choose the best.', tags:['20 min','Solo or group'],
+      modal:'<p>Write and rehearse five 30-second openings for the same talk:</p><ul><li><strong>The question</strong> — something the audience can\'t immediately answer.</li><li><strong>The statistic</strong> — one surprising number, no explanation.</li><li><strong>The story</strong> — a brief, specific anecdote.</li><li><strong>The silence</strong> — walk forward, look at the audience for five seconds, begin.</li><li><strong>The provocation</strong> — state your conclusion at the start.</li></ul><p><strong>Debrief:</strong> Rank all five by impact. Discuss why the most surprising one worked — or didn\'t.</p>' }
+  ],
+  5:[
+    { type:'Improvisation', title:'The Impromptu', body:'Draw a topic card. 60 seconds to prepare. 5 minutes to speak. No notes.', tags:['5–7 min','Solo or group'],
+      modal:'<ol><li>Prepare topic cards — abstract, concrete, or academic.</li><li>Draw one. 60 seconds to organise your thinking. No writing.</li><li>Speak for 5 minutes. No stopping.</li><li>Debrief: what didn\'t actually require preparation?</li></ol><p><strong>Note:</strong> At this level, structure should be automatic. The challenge is sustaining depth without notes.</p>' },
+    { type:'Adaptation', title:'Three Audiences', body:'Give the same talk to a beginner, a peer, and a subject expert. Map every adaptation you make.', tags:['20 min','Group'],
+      modal:'<ol><li>Prepare a 4-minute talk.</li><li>Deliver to: a complete beginner, a sceptical peer, a subject expert.</li><li>After each delivery, note every change — language, examples, tone, structure.</li><li>Debrief: which version required the most work? Which was most honest?</li></ol><p><strong>Note:</strong> Professional adaptation is invisible to the audience. That is the standard.</p>' },
+    { type:'Integration', title:'The Internal Observer', body:'Deliver a full presentation while monitoring your own performance in real time. Write a debrief immediately after.', tags:['Full length','Observed'],
+      modal:'<ol><li>Deliver a complete presentation as normal.</li><li>While speaking, keep part of your attention on audience signals: confusion, interest, restlessness.</li><li>Adjust in real time at least once — note when and why.</li><li>Immediately after: write 3 sentences on what the audience received vs what you intended.</li></ol><p><strong>Note:</strong> The gap between intention and effect is always larger than we think.</p>' }
+  ]
+};
+
+const RUBRICS = {
+  s1:[
+    ['Voice','Difficult to hear','Can be heard by those nearby','Speaks clearly throughout','Projects naturally; easy to hear from anywhere'],
+    ['Eye contact','Looks at ground or notes','Occasionally looks up','Maintains eye contact most of the time','Natural, confident contact throughout'],
+    ['Structure','No clear beginning or end','Has a start and a finish','Clear beginning, middle, ending','Engaging opening, memorable close'],
+    ['Topic','Topic unclear','Topic identifiable','Topic clear and explained with some detail','Topic well-chosen and explored with genuine interest']
+  ],
+  s3:[
+    ['Content','Ideas unclear or unsupported','Some ideas supported','Main points clear and well-supported','Argument compelling; evidence well-chosen'],
+    ['Structure','Hard to follow','Basic structure; transitions awkward','Three parts with clear signposting','Seamless; transitions feel purposeful'],
+    ['Audience awareness','No adaptation evident','Some adjustment to audience','Appropriate language and tone throughout','Strong rapport; perfectly calibrated'],
+    ['Delivery','Monotone; reads from notes','Some variation in pace','Good pace, pausing, vocal variety','Dynamic and genuinely present'],
+    ['Slides','Cluttered or absent','Present but unclear','Clear; support rather than replace the speaker','Minimal, purposeful, visually coherent'],
+    ['Q&A','Unable to respond','Answers with difficulty','Clear, composed responses','Handles challenge with nuance and confidence']
+  ],
+  s5:[
+    ['Argument','No thesis; no analytical depth','Thesis present; surface analysis','Clear thesis, argued with evidence','Sophisticated; nuanced; genuinely insightful'],
+    ['Intellectual presence','Recites; no spontaneity','Some moments of spontaneity','Comfortable; can elaborate naturally','Commands intellectual authority; thinks in real time'],
+    ['Adaptability','Rigid adherence to plan','Adjusts slightly','Responsive to room; adapts naturally','Reads room expertly; adjusts without losing thread'],
+    ['Concision','Repetitive or over-explained','Generally clear; some redundancy','Economic; every sentence earns its place','Precise to the point of compression'],
+    ['Q&A','Defensive under questioning','Adequate; some discomfort','Welcomes questions with composure','Extends the argument through challenge'],
+    ['Overall impact','Argument unlikely to be retained','Remembered in outline','Argument clear and retained','The presentation changes how the audience thinks']
+  ]
+};
+
+// SVG ICONS
+const ICONS = {
+  plan:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  struct:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg>`,
+  slide:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>`,
+  voice:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/><path d="M19.07,4.93a10,10,0,0,1,0,14.14"/></svg>`,
+  nerve:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M4 12c0 4.4 3.6 8 8 8"/><circle cx="12" cy="12" r="2"/></svg>`,
+  engage:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  qa:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09,9a3,3,0,0,1,5.83,1c0,2-3,3-3,3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  reflect:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>`
+};
+
+const STAGE_ACCENT_VARS = ['accent4','accent2','accent1','accent3','accent5'];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentStage = 1;
+let currentSkill = 'planning';
+const checkState = {};
+
+// ═══════════════════════════════════════════
+// STAGE SWITCH
+// ═══════════════════════════════════════════
+function setStage(n) {
+  currentStage = n;
+
+  // Update switcher
+  document.querySelectorAll('.stage-btn').forEach(b => b.classList.toggle('active', +b.dataset.s === n));
+
+  // Update hero
+  const h = HERO[n];
+  document.getElementById('heroEyebrow').textContent = h.eyebrow;
+  document.getElementById('heroSub').textContent = h.sub;
+  document.getElementById('startTitle').textContent = h.startTitle;
+  document.getElementById('startSteps').innerHTML = h.steps.map(s => `<li>${s}</li>`).join('');
+
+  // Update accent colour on start-box (gold for s1/s3, etc)
+  const accentVar = `--${STAGE_ACCENT_VARS[n-1]}`;
+  const accentVal = getComputedStyle(document.documentElement).getPropertyValue(accentVar).trim();
+  document.querySelector('.start-box').style.borderColor = accentVal;
+  document.querySelector('.start-box-label').style.color = accentVal;
+  document.querySelectorAll('.start-box-steps li').forEach(li => {
+    li.style.setProperty('--bullet-bg', accentVal);
+  });
+  // Inline ::before colour via CSS var trick — re-set CSS var
+  document.documentElement.style.setProperty('--stage-accent-active', accentVal);
+
+  // Rebuild dynamic sections
+  renderFramework();
+  renderSkillPanel(currentSkill);
+  renderChecklists();
+  renderPhrases();
+  renderActivities();
+}
+
+// ═══════════════════════════════════════════
+// FRAMEWORK
+// ═══════════════════════════════════════════
+function renderFramework() {
+  let html = '';
+  FRAMEWORK.forEach((f, i) => {
+    const tags = f.tags.map(t => `<span class="skill-tag">${t}</span>`).join('');
+    html += `<div class="stage-item">
+      <div class="stage-card ${f.sClass}" id="sc${i}" onclick="toggleStageCard(${i})">
+        <div class="stage-header">
+          <span class="stage-num">${f.num}</span>
+          <span class="stage-badge">${f.badge}</span>
+        </div>
+        <div class="stage-title-el">${f.name}</div>
+        <div class="stage-meta">${f.meta}</div>
+        <div class="stage-desc">${f.descs[currentStage]}</div>
+        <div class="stage-tags">${tags}</div>
+        <div class="stage-expand">
+          <div class="expand-item"><h4>Focus</h4><p>${f.focus[currentStage]}</p></div>
+          <div class="expand-item"><h4>Success looks like</h4><p>${f.success[currentStage]}</p></div>
+          <div class="expand-item"><h4>Challenge</h4><p>${f.challenge[currentStage]}</p></div>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('stageCardList').innerHTML = html;
+}
+
+function toggleStageCard(i) {
+  const card = document.getElementById('sc' + i);
+  const node = document.getElementById('sn' + i);
+  const isActive = card.classList.contains('active');
+  card.classList.toggle('active', !isActive);
+  node.classList.toggle('lit', !isActive);
+}
+
+// ═══════════════════════════════════════════
+// SKILLS
+// ═══════════════════════════════════════════
+const SKILL_KEYS = ['planning','structure','slides','voice','nerves','engagement','questions','reflection'];
+const SKILL_COLOURS = ['accent1','accent2','accent3','accent4','accent5','accent1','accent2','accent4'];
+
+function renderSkillPanel(key) {
+  currentSkill = key;
+  const data = SKILLS[key];
+  const si = currentStage - 1;
+  const colIdx = SKILL_KEYS.indexOf(key);
+  const colVar = `var(--${SKILL_COLOURS[colIdx]})`;
+
+  let html = `<div class="skill-card-grid">`;
+  data.cards.forEach((card, ci) => {
+    const dots = [1,2,3,4,5].map(d =>
+      `<div class="prog-dot${d <= currentStage ? ' on' : ''}"></div>`
+    ).join('');
+    const stageLabel = ['Stage 1','Stage 2','Stage 3','Stage 4','Stage 5'][si];
+    html += `<div class="skill-card" style="--sc-card:${colVar}">
+      ${ICONS[data.icon] || ''}
+      <div class="skill-card-stage" style="color:${colVar}">${stageLabel} · ${data.label}</div>
+      <h3>${card.title}</h3>
+      <p>${card.bodies[si]}</p>
+      <div class="skill-progression">${dots}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Build all panel containers lazily
+  const container = document.getElementById('skillPanels');
+  let existing = document.getElementById('sp-' + key);
+  if (!existing) {
+    const div = document.createElement('div');
+    div.className = 'skill-panel'; div.id = 'sp-' + key;
+    container.appendChild(div);
+    existing = div;
+  }
+  existing.innerHTML = html;
+  container.querySelectorAll('.skill-panel').forEach(p => p.classList.remove('active'));
+  existing.classList.add('active');
+}
+
+function switchSkill(key, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSkillPanel(key);
+}
+
+// ═══════════════════════════════════════════
+// CHECKLISTS
+// ═══════════════════════════════════════════
+function renderChecklists() {
+  const lists = CHECKLISTS[currentStage];
+  let html = '';
+  lists.forEach((cl, ci) => {
+    const total = cl.items.length;
+    const done = cl.items.filter((_,ii) => checkState[`${currentStage}-${ci}-${ii}`]).length;
+    const items = cl.items.map((item, ii) => {
+      const isDone = !!checkState[`${currentStage}-${ci}-${ii}`];
+      return `<div class="checklist-item${isDone?' checked':''}" onclick="toggleCheck(this,${currentStage},${ci},${ii})">
+        <div class="check-box">✓</div><div class="check-text">${item}</div>
+      </div>`;
+    }).join('');
+    const pct = Math.round((done/total)*100);
+    html += `<div class="checklist-card">
+      <h3>${cl.title}</h3><div class="checklist-subtitle">${cl.sub}</div>
+      ${items}
+      <div class="checklist-progress">
+        <div class="progress-bar"><div class="progress-fill" id="pf-${ci}" style="width:${pct}%"></div></div>
+        <div class="progress-label" id="pl-${ci}">${done} / ${total}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('checklistGrid').innerHTML = html;
+}
+
+function toggleCheck(el, stage, ci, ii) {
+  const key = `${stage}-${ci}-${ii}`;
+  checkState[key] = el.classList.toggle('checked');
+  const lists = CHECKLISTS[stage];
+  const total = lists[ci].items.length;
+  const done = lists[ci].items.filter((_,x) => checkState[`${stage}-${ci}-${x}`]).length;
+  const pct = Math.round((done/total)*100);
+  const pf = document.getElementById('pf-' + ci);
+  const pl = document.getElementById('pl-' + ci);
+  if (pf) pf.style.width = pct + '%';
+  if (pl) pl.textContent = `${done} / ${total}`;
+}
+
+// ═══════════════════════════════════════════
+// RUBRIC
+// ═══════════════════════════════════════════
+function selectRubric(key, btn) {
+  document.querySelectorAll('.rubric-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('rubricBody').innerHTML = RUBRICS[key]
+    .map(r => `<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// PHRASES
+// ═══════════════════════════════════════════
+function renderPhrases() {
+  document.getElementById('phrasesGrid').innerHTML = PHRASES[currentStage].map(g => `
+    <div class="phrase-group">
+      <h3>${g.title}</h3>
+      ${g.phrases.map(p => `<div class="phrase-item" onclick="copyPhrase(this,'${p.replace(/'/g,"\\'")}')">
+        <div class="phrase-text">${p}</div><div class="phrase-copy">copy</div>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+function copyPhrase(el, text) {
+  const clean = text.replace(/^"|"$/g,'');
+  navigator.clipboard.writeText(clean).then(() => {
+    el.classList.add('copied');
+    el.querySelector('.phrase-copy').textContent = '✓';
+    showToast('Copied to clipboard');
+    setTimeout(()=>{ el.classList.remove('copied'); el.querySelector('.phrase-copy').textContent='copy'; }, 2000);
+  });
+}
+
+// ═══════════════════════════════════════════
+// ACTIVITIES
+// ═══════════════════════════════════════════
+function renderActivities() {
+  document.getElementById('activitiesGrid').innerHTML = ACTIVITIES[currentStage].map((a,i) => `
+    <div class="activity-card" onclick="openActivity(${currentStage},${i})">
+      <div class="activity-type">${a.type}</div>
+      <h3>${a.title}</h3>
+      <p>${a.body}</p>
+      <div class="activity-meta">${a.tags.map(t=>`<span class="activity-tag">${t}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function openActivity(stage, idx) {
+  const a = ACTIVITIES[stage][idx];
+  document.getElementById('modalInner').innerHTML = `
+    <div class="modal-eyebrow">${a.type}</div>
+    <h2>${a.title}</h2>
+    <div class="modal-body">${a.modal}</div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════
+let timerDuration=120, timerRemaining=120, timerInterval=null, timerRunning=false;
+const CIRCUM = 2*Math.PI*44;
+
+function setTimer(s, btn) {
+  if (timerRunning) return;
+  document.querySelectorAll('.t-preset').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  timerDuration=s; timerRemaining=s;
+  updateTimerDisplay(); updateArc(1);
+}
+function timerToggle() {
+  if (timerRunning) {
+    clearInterval(timerInterval); timerRunning=false;
+    document.getElementById('timerStartBtn').textContent='Resume';
+    document.getElementById('timerLbl').textContent='Paused';
+  } else {
+    if (timerRemaining<=0){ timerReset(); return; }
+    timerRunning=true;
+    document.getElementById('timerStartBtn').textContent='Pause';
+    document.getElementById('timerLbl').textContent='Running';
+    timerInterval=setInterval(()=>{
+      timerRemaining--;
+      updateTimerDisplay(); updateArc(timerRemaining/timerDuration);
+      if (timerRemaining<=0){
+        clearInterval(timerInterval); timerRunning=false;
+        document.getElementById('timerStartBtn').textContent='Start';
+        document.getElementById('timerLbl').textContent='Done';
+      }
+    },1000);
+  }
+}
+function timerReset() {
+  clearInterval(timerInterval); timerRunning=false;
+  timerRemaining=timerDuration;
+  updateTimerDisplay(); updateArc(1);
+  document.getElementById('timerStartBtn').textContent='Start';
+  document.getElementById('timerLbl').textContent='Ready';
+}
+function updateTimerDisplay() {
+  const m=Math.floor(timerRemaining/60), s=timerRemaining%60;
+  document.getElementById('timerDisp').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function updateArc(ratio) {
+  document.getElementById('arcProg').style.strokeDashoffset = CIRCUM*(1-ratio);
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ═══════════════════════════════════════════
+// CANVAS STARS
+// ═══════════════════════════════════════════
+(function(){
+  const c=document.getElementById('canvas-bg'), ctx=c.getContext('2d');
+  let stars=[];
+  function resize(){
+    c.width=innerWidth; c.height=innerHeight;
+    stars=Array.from({length:Math.floor(c.width*c.height/6000)},()=>({
+      x:Math.random()*c.width, y:Math.random()*c.height,
+      r:Math.random()*1.1+0.1, a:Math.random(),
+      sp:0.002+Math.random()*0.003, ph:Math.random()*Math.PI*2
+    }));
+  }
+  function draw(t){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      const a=s.a*(0.4+0.6*Math.sin(t*0.001*(s.sp*500)+s.ph));
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,210,230,${a})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize(); requestAnimationFrame(draw);
+})();
+
+// ═══════════════════════════════════════════
+// REVEAL
+// ═══════════════════════════════════════════
+const revObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('visible'); revObs.unobserve(e.target); }
+}),{threshold:0.06});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+setStage(1);
+selectRubric('s3', document.querySelector('.rubric-btn.active'));
+updateTimerDisplay();
+updateArc(1);
+</script>
+</body>
+</html>
